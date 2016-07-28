@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style media="screen">
+      #two{
+width: 980px;
+margin: auto;
+        width: 960px;
+        height: 520px;
+      }
+      .legend {
+    font-size: 14px;
+    font-weight: bold;
+}
+#p{
+  margin:auto;
+  width: 260px;
+}
+
+    </style>
+  </head>
+
+  <body>
+    <div id="p">
+        <strong>ASSAULT CASES IN CHICAGO</strong>
+    </div>
+    <div id="two">
+    <svg id="visualisation" width="980" height="500" margin="auto">
+      <rect x="800" y="50" width="20" height="20" fill="green"></rect>
+      <text x="830" y="65" >Arrest</text>
+      <rect x="800" y="80" width="20" height="20" fill="blue"></rect>
+      <text x="830" y="95" > Not Arrest</text>
+
+
+    </svg>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script>
+
+    var vis=d3.select("#visualisation"),
+    WIDTH=960,
+    HEIGHT=500,
+    MARGINS={
+      top:30,
+      right:20,
+      bottom:30,
+      left:70
+    };
+    var causes=["Arrest","Not Arrest"];
+    var causes=["Arrest","Not Arrest"]
+    d3.json("part_2_json.json",function(err,data){
+      if(err){
+        throw err;
+      }
+        data=d3.values(data);
+
+        var layers=d3.layout.stack()(causes.map(function(c){
+          return data.map(function(d){
+            return {x:d.year,y:d[c]};
+          });
+        }));
+
+
+        var xScale = d3.scale.ordinal().rangePoints([MARGINS.left, WIDTH - MARGINS.right]).domain(layers[0].map(function(d){return d.x;}));
+
+        var yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0,d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
+
+        var   xAxis = d3.svg.axis()
+        .scale(xScale);
+
+        var yAxis = d3.svg.axis()
+        .scale(yScale)
+        .orient("left");
+
+        vis.append("svg:g")
+         .attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
+         .call(xAxis);
+
+         vis.append("svg:g")
+        .attr("transform", "translate(" + (MARGINS.left) + ",0)")
+        .call(yAxis);
+
+        var lineGen = d3.svg.line()
+        .x(function(d) {
+            return xScale(d.year);
+        })
+        .y(function(d) {
+            return yScale(d.Arrest);
+        })
+        .interpolate("basis");
+
+        var lineGen2 = d3.svg.line()
+      .x(function(d) {
+        return xScale(d.year);
+      })
+      .y(function(d) {
+        return yScale(d["Not Arrest"]);
+      });
+
+      vis.append("svg:g")
+        .attr("class","axis")
+        .attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
+        .call(xAxis);
+
+    vis.append("svg:g")
+        .attr("class","axis")
+        .attr("transform", "translate(" + (MARGINS.left) + ",0)")
+        .call(yAxis);
+
+        vis.append('svg:path')
+      .attr('d', lineGen(data))
+      .attr('stroke', 'green')
+      .attr('stroke-width', 2)
+      .attr('fill', 'none');
+
+      vis.append('svg:path')
+      .attr('d', lineGen2(data))
+      .attr('stroke', 'blue')
+      .attr('stroke-width', 2)
+      .attr('fill', 'none');
+
+      });
+    </script>
+
+
+    </div>
+  </body>
+</html>
