@@ -1,18 +1,17 @@
-
+//console.time("qw");
+console.time("C");
 var fs = require('fs'),
     readline = require('readline');
-    var i=0,a=0,b=0,h=0;
-    var lin;
-    var arr1={};
-    var arr2={};
-    var ar={};
-    var ar2={};
-    var year;
-    var k=0;
-    var type=0,des=0,arrest=0;
-    var year="";
-    var tot=[];
-    var tot2=[];
+    var i=0,a=0,b=0,h=0, lin,
+      arr1={},
+     arr2={},
+     ar={},
+     ar2={},
+     year,
+     k=0,
+     type=0,des=0,arrest=0,
+     year="",
+     tot=[],     tot2=[];
     var rd = readline.createInterface({
     input: fs.createReadStream('../Crime.csv'),
     output: process.stdout,
@@ -78,14 +77,9 @@ if(lin2[year]>=2001||lin2[year]<=2016)
         "Not Arrest":ar2[lin2[year]].f
        };
     }
-
 }
-
 });
-rd.on('close', function() {
-  // console.log(arr1);
-  // console.log(arr2);
-
+rd.on('close', function(){
     var file=JSON.stringify(arr1);
     fs.writeFile("part_1_json.json",file,"utf8",function(error){
       if(error)
@@ -96,13 +90,13 @@ rd.on('close', function() {
       if(error)
       throw error;
   });
-
+  //console.timeEnd("qw");
 });
 
 function funtest(l){
   if(tot.indexOf(l)==-1){
     tot.push(l);
-  ar[l]={
+    ar[l]={
     o:0,
     u:0
   };
@@ -112,7 +106,7 @@ function funtest(l){
 function funtest2(l){
   if(tot2.indexOf(l)==-1){
     tot2.push(l);
-  ar2[l]={
+    ar2[l]={
     t:0,
     f:0
   };
